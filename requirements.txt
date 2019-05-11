@@ -3,14 +3,9 @@ cachetools==3.1.0
 certifi==2018.11.29
 chardet==3.0.4
 Click==7.0
-cryptocmd==0.5.2
 cssselect==1.0.3
 Flask==1.0.2
 Flask-Cors==3.0.7
-google-api-python-client==1.7.8
-google-auth==1.6.3
-google-auth-httplib2==0.0.3
-google-auth-oauthlib==0.2.0
 gunicorn==19.9.0
 httplib2==0.12.1
 idna==2.8
