@@ -2,6 +2,9 @@
 
 A dashboard for integrating Python, Tableau, and Google Sheets as a database for automated data collection and visualization. Built in with a full webscraper for the top 100 crypto coins and scikit-learn models for continous integration of new bitcoin data.
 
+[Live Site](https://scm315-honors-app-prod.herokuapp.com)
+
+
 <img src="https://i.imgur.com/yiFsbRE.jpg"/>
 
 ## Config
