@@ -125,7 +125,7 @@ class statistics():
         return a
     
     def neural_nets(self):
-        """perform backpropagation"""
+        """lstm backpropagation"""
         return None
 
 # if __name__ == "__main__":
