@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <title>
+    Bitcoin Trend Mining
+  </title>
+  <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, shrink-to-fit=no' name='viewport' />
+  <!--     Fonts and icons     -->
+  <link href="https://fonts.googleapis.com/css?family=Poppins:200,300,400,600,700,800" rel="stylesheet" />
+  <link href="https://use.fontawesome.com/releases/v5.0.6/css/all.css" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap.min.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='dash_css_min.css') }}">
+    <style>
+        ::-webkit-scrollbar {
+          width: 20px;
+        }
+        ::-webkit-scrollbar-track {
+          box-shadow: inset 0 0 5px grey; 
+          border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+          background: rgb(53, 98, 134); 
+          border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+          background: rgb(209, 63, 136); 
+        }
+        #rolling_containter div{
+            margin-bottom: 10px; 
+        }.graphTitle{
+            margin-left: 5px;
+        }#vizContainers{
+          margin: 20px;
+          max-height: 450px;
+          overflow-y:hidden;
+        }.cardExtends{
+          height: 80%;
+        }.inputboxes{
+          background-color: rgb(30, 32, 36);
+          border-color: rgb(249,150,200);
+          height: 35px;
+          width: 40%;
+          color: white;
+          text-align: center;
+          margin-left: 10px;
+        }.inputboxes:focus{
+          outline: 0px;
+        }i::before{
+          background:transparent;
+        }#makethisnone{
+          display: none;
+        }#feedInput{
+          text-align:center;
+          margin-left: 10%;
+          margin-right: 2%;
+          font-size: larger;
+        }#inputboxes{
+          max-width: 40%;
+          margin-right: 10px;
+          margin-left: 10px;
+        }
+    </style>
+    <link rel="icon" href="https://yourstory.com/collections/images/Bitcoin.png">
+    <script src="https://public.tableau.com/javascripts/api/tableau-2.min.js"></script>
+    <script async defer>
+        window.onbeforeunload = function(){
+          window.scrollTo(0, 0);
+        }
+        let viz1,viz2,viz3,viz4,
+            scroll_position = 0,
+            ticking = false,
+            graphName, graphDesc, graphDesc2, descriptionBar;
+        let meta = ['name','desc','desc2'];
+        const GraphMetaData = {
+          'graph1':{
+            'name':'Bitcoin Analysis',
+            'desc':'via Tableau',
+            'desc2':`Bitcoin is a global digital currency, which runs on the Blockchain to leverage 
+                      facets such as decentralization, immutability, and peer-to-peer networks.`
+          },
+          'graph2':{
+            'name':'Dataset Exploration',
+            'desc':'Tableau Window Functions',
+            'desc2': `As seen on the graph, the 90 day moving average is created within tableau by 
+                      utlizing window functions; iterating over the same column to derive meaning 
+                      from the other points within the column. It is interesting to see the points 
+                      at which bitcoin has fell below the 90-day Moving Average.`
+          },
+          'graph3':{
+            'name':'Dataset Exploration',
+            'desc':'Candle-light Representation',
+            'desc2':`Tableau is actually pretty useful for financial data! Given the power of their API,
+                      and the tooltips, a full fledged candle light bar can be visualized, along with other 
+                      indicators such as MACD and RSI.`
+          },
+          'graph4':{
+            'name':'Dataset Exploration',
+            'desc':'Model Testing',
+            'desc2':`If I was doing model testing, I could automatically udpdate my
+                      data to Google Sheets and the new graphs will populate here. Evidently,
+                      this dashboard is effective in representing real-time data that changes, much
+                      like cryptocurrencies.`
+          },
+          'graph5':{
+            'name':'Additional Tools',
+            'desc':'History and Scrapers',
+            'desc2':`We also get the power of the whole Python eco-system. We can create web-scrapers
+                      and the only limit is Python itself. Enter a date or choose a cryptocurrency to find
+                      out more!`
+          }
+        };
+        let vizs = [];
+        function initViz(){
+            const containerDivs = [
+                document.getElementById("vizContainer1"),
+                document.getElementById("vizContainer2"),
+                document.getElementById("vizContainer3"),
+                document.getElementById("vizContainer4")
+            ];
+            const urls = [
+                "https://public.tableau.com/views/Book1_15521546349930/Info-PricevsVol?:embed=y&:display_count=yes",
+                "https://public.tableau.com/views/Book1_15521546349930/90-DayMA?:embed=y&:display_count=yes",
+                "https://public.tableau.com/views/Book1_15521546349930/Sheet9?:embed=y&:display_count=yes",
+                "https://public.tableau.com/shared/KF99S5STR?:display_count=yes"
+            ];
+            vizs = [viz1,viz2,viz3,viz4];
+            for(let [i,url] of urls.entries()){
+              vizs[i] = new tableau.Viz(containerDivs[i], url);
+            }
+            graphName = document.getElementById('graphName');
+            graphDesc = document.getElementById('graphDesc');
+            graphDesc2 = document.getElementById('graphDesc2');
+            descriptionBar = [graphName, graphDesc, graphDesc2];
+            let rollingButtonDiv = document.querySelector('#rollingButtonDiv');
+            rollingButtonDiv.style.position = 'absolute';
+            rollingButtonDiv.style.bottom = '10px';
+            setTimeout(()=>{
+              const frzs = document.querySelectorAll('iframe');
+              for(let fr of frzs){
+                fr.style.height = '450px';
+              }
+            },3000);
+            setTimeout(()=>doSomething(window.scrollY),1000);
+            attrTransformer();
+            let intS = () =>{
+              let s=document.querySelectorAll('iframe');
+              if(s.length >= 4){
+                clearInterval(mtys);
+                setTimeout(()=>{
+                  for(let i of s){
+                    i.style.height = '450px';
+                  }
+                },5000);
+              }
+            }
+           let mtys = setInterval(intS,700);
+        }
+        function attrTransformer(){
+          let parents = document.querySelectorAll('[title="vizParents"]');
+          let nodes = document.querySelectorAll('[title="data visualization"]');
+          try {
+            for(i in nodes){
+              nodes[i].style.height = '500px';
+              nodes[i].style.margin =  '0px 10px';
+              nodes[i].style.paddingRight = '20px';
+              parents[i].style.height = 'inherit'
+            }
+          } catch(e){
+            setTimeout(()=>attrTransformer(),1000);
+          }
+        }
+        async function reloadGraph(i){
+            let controller = await vizs[i].refreshDataAsync();
+            alert('Data Refreshed');
+        }
+        function doSomething(scroll_pos){
+            try{
+                if(eval(scrollArr[0])){
+                  render_g(1);
+                }else if(eval(scrollArr[1])){
+                  render_g(2);
+                }else if(eval(scrollArr[2])){
+                  render_g(3);
+                }else if(eval(scrollArr[3])){
+                  render_g(5);
+                } else if(eval(scrollArr[4])){
+                  scrollToTop(0);
+                }
+            }catch(e){
+                setTimeout(start,2000);
+            }
+        }
+        function render_g(x){
+          textTransformer(descriptionBar,`graph${x}`);
+        }
+
+        function textTransformer(elem, txt){
+          for(let [i,ele] of elem.entries()){
+            ele.textContent = GraphMetaData[txt][meta[i]];
+          }
+        }
+        function start(){
+            window.addEventListener('scroll',(e)=>{
+              scroll_position = window.scrollY;
+              if(!ticking){
+                window.requestAnimationFrame(()=>{
+                    doSomething(scroll_position);
+                    ticking = false;
+                });
+                ticking = true;
+              }
+            });
+        }   //gets the max limit window.scrollY
+        const limitScroll = () => {
+          return Math.max(document.body.scrollHeight, document.body.offsetHeight, 
+                   document.documentElement.clientHeight, document.documentElement.scrollHeight, document.documentElement.offsetHeight)
+        };
+        const scrollArr = [
+          'scroll_position >= 0 && scroll_position<628',
+          'scroll_position >= 628 && scroll_position <1200',
+          'scroll_position >= 1200 && scroll_position <1800',
+          'scroll_position >= 1960 && scroll_position != limitscroll()'
+        ];
+        function moveUserLoc(){
+          if(eval(scrollArr[0])){
+            scrollToTop(698);
+          }else if(eval(scrollArr[1])){
+            scrollToTop(1330);
+          }else if(eval(scrollArr[2])){
+            scrollToTop(1964);
+          }else if(eval(scrollArr[3])){
+            let lim = limitScroll();
+            scrollToTop(lim);
+          }else{
+            scrollToTop(0);
+          }
+        }
+        function scrollToTop(x){
+          let scrollStep = 35,
+              scrollInterval = setInterval(()=>{
+              if (window.scrollY < x){
+                  window.scrollBy(0, scrollStep);
+              }else if (x==0){
+                scrollStep = -scrollStep;
+                window.scrollBy(0, scrollStep);
+              }
+              else clearInterval(scrollInterval); 
+          },15);
+        }
+        document.addEventListener("DOMContentLoaded", start); 
+    </script>
+    <script async defer>
+      function ajaxScrape(){
+        let usrVal = document.getElementById('inputboxes').value;
+        if(usrVal==""){
+          return alert('Please input a date...');
+        }
+        let reqData = new Date(usrVal);
+        if (reqData > new Date()){
+          return alert('Please input a past date.');
+        }
+        const searchI = document.querySelector('#searchOrSpin');
+        searchI.classList.add('fa-spin');
+        let monthStr = reqData.toLocaleString('en-us', { month: 'long' });
+        let fDate = `${monthStr} ${reqData.getDate()+1} ${reqData.getFullYear()}`;
+        let rr = new RegExp(/&sa=U&/);
+        let rr1 = new RegExp(/[^\/]*$/);
+        let subDom = new RegExp(/^(?:https?:\/\/)?(?:[^@\/\n]+@)?(?:www\.)?([^:\/?\n]+)/);
+        let linkArr, external_cnt = 0;
+        const res = fetch('/postScrape',{
+          method:'POST',
+          mode:'no-cors',
+          headers:{
+            'Accept':'application/json',
+            'Content-Type':'application/json'
+          },
+          body: JSON.stringify({'date':fDate})
+        });
+        res.then(queryRes=>{
+          searchI.classList.remove('fa-spin');
+          return queryRes.json();
+        }).then(obj=>ScrapeAppender(obj)).catch(e=>console.warn(e));
+        
+        function ScrapeAppender(resJsonLinks){
+          resJsonLinks = resJsonLinks.links;
+          const fUrls2 = [];
+          for(var i of resJsonLinks){
+            if(i.indexOf('/url?q=')>-1 && i.indexOf('&sa=U&') > -1 && i.indexOf('webcache')==-1){
+              i = i.replace('/url?q=','');
+              i = i.replace(rr,'');
+              i = i.replace(rr1,'');
+              fUrls2.push(i);
+            }
+          }
+          const table = document.querySelector('#scrapeListTable');
+          while (table.firstChild){
+            table.removeChild(table.firstChild);
+          }
+          for(var i of fUrls2){
+            if(external_cnt > 8)
+              return;
+            let a = document.createElement('tr');
+            let b = document.createElement('td');
+            a.append(b);
+            let c = document.createElement('div'); c.classList.add('form-check');
+            c.style.width = '0px';
+            b.append(c);
+            let d = document.createElement('label'); d.classList.add('form-check-label');
+            c.append(d);
+            let e = document.createElement('input'); e.classList.add('form-check-input');
+            d.append(e);
+            e.type = 'checkbox';
+            let e2 = document.createElement('span'); e2.classList.add('form-check-sign');
+            d.append(e2);
+            let f = document.createElement('span'); 
+            e2.append(f);
+            f.classList.add('check');
+            let b2 = document.createElement('td');
+            let headerP = document.createElement('p');
+            let aHead = document.createElement('a');
+            aHead.href = i;
+            aHead.textContent = i.match(subDom)[0];
+            aHead.id = `scrape${external_cnt++}`;
+            aHead.style.marginLeft = '5px';
+            headerP.append(aHead)
+            headerP.classList.add('title');
+            b2.append(headerP);
+            table.appendChild(a);
+            a.appendChild(b2);
+            e.onclick = ()=> crossout(aHead);
+          }
+        }
+      }
+      
+      function dataFeeder(){
+        const spinnerData = document.getElementById('database_spin');
+        spinnerData.classList.add('fa-spin');
+        let feederEle = document.getElementById('feedInput');
+        
+        if(feederEle.value ==''){
+          spinnerData.classList.remove('fa-spin');
+          return alert('Please input a currency.');
+        }
+        
+        const userValJson = {'value':feederEle.value};
+        const feedRes = fetch('/peekValues',{
+          method:'POST',
+          mode:'no-cors',
+          headers:{
+            'Accept':'application/json',
+            'Content-Type':'application/json'
+          },
+          body: JSON.stringify(userValJson)
+        });
+        feedRes.then(queryRes=>{
+          return queryRes.json();
+        }).then(obj=>peekResponder(obj)).catch(e=>console.warn(e));
+        
+        function peekResponder(obj){
+          let peekBody = document.querySelector('#peekTable');
+          while (peekBody.firstChild){
+            peekBody.removeChild(peekBody.firstChild);
+          }
+          let peekHead = document.getElementById('peekDataHead');
+          while (peekHead.firstChild){
+            peekHead.removeChild(peekHead.firstChild);
+          }
+          if(obj['400'] == 'Failed'){
+            spinnerData.classList.remove('fa-spin');
+            alert('You have entered an incorrect value. Please try again.');
+          }
+          
+          const headers = ['Date','Open','High','Low','Close','Volume','Market Cap'];
+          
+          for(var title of headers){
+            let a = document.createElement('th');
+            a.classList.add('text-center');
+            a.textContent = title;
+            peekHead.appendChild(a);
+          }
+          
+          for(var row of obj.userVals){
+            let tt = new Date(row[0]);
+            row[0] = `${tt.getMonth()+1}/${tt.getDate()+1}/${tt.getFullYear()}`;	
+            let a = document.createElement('tr');
+            let b = document.createElement('td');  
+            let b2 = document.createElement('td');
+            let b3 = document.createElement('td');
+            let b4 = document.createElement('td');
+            let b5 = document.createElement('td');
+            let b6 = document.createElement('td');
+            let b7 = document.createElement('td');
+            for (var [i,j] of [b,b2,b3,b4,b5,b6,b7].entries()){
+              j.textContent = row[i];
+              a.append(j);
+            }
+            // document.querySelector('#peekDataHead').style.display = "block";
+            peekBody.appendChild(a);
+            spinnerData.classList.remove('fa-spin');
+          }
+        }
+      }
+      function crossout(ele){
+        if(ele.style.textDecoration == 'line-through')
+          ele.style = "text-decoration: none";
+        else
+          ele.style = "text-decoration: line-through";
+      }
+    </script>
+</head>
+
+<body class=" " onload="initViz()">
+  <div class="wrapper ">
+    <div class="sidebar" data-color="blue">
+        <!-- my containter -->
+        <div class="container" style="margin-top:20px;">
+            <div class="row" align="center" id="rolling_containter">
+                <div class="col" style="margin-bottom:20px;">
+                    <h1 id="graphName" style="margin-top:40%;"></h1>
+                </div>
+                <div class="w-100"></div>
+                  <div class="col" style="margin-bottom:10px;">
+                    <h4 id="graphDesc" style="margin-top:10%;"></h4>
+                  </div>
+                <div class="w-100"></div>
+                  <div class="col" style="margin-bottom:20px;overflow: scroll; overflow-y:hidden;overflow-x:hidden;">
+                    <p id="graphDesc2" style="margin-top:10%;padding-bottom: 20px;overflow: scroll;max-height: 160px;overflow-y:auto;overflow-x: hidden;"></p>
+                  </div>
+                <div class="w-100"></div>
+                <div class="col" style="margin-top:50px;" id="rollingButtonDiv">
+                  <button class="btn btn-outline-warning" onclick="moveUserLoc()">Next Graph</button>
+                </div>
+            </div>
+        </div>
+        <!-- my containter -->
+    </div>
+    <div class="main-panel">
+      <!-- Navbar -->
+      <nav class="navbar navbar-expand-lg navbar-absolute navbar-transparent">
+        <div class="container-fluid">
+          <div class="navbar-wrapper">
+            <div class="navbar-toggle d-inline">
+            </div>
+            <a class="navbar-brand" href="#pablo">SCM 315 Honors Project</a>
+          </div>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-bar navbar-kebab"></span>
+            <span class="navbar-toggler-bar navbar-kebab"></span>
+            <span class="navbar-toggler-bar navbar-kebab"></span>
+          </button>
+        </div>
+      </nav>
+      <div class="modal fade" id="searchModal" tabindex="-1" role="dialog" aria-labelledby="searchModal" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <input type="text" class="form-control" id="inlineFormInputGroup" placeholder="SEARCH">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <i class="tim-icons icon-simple-remove"></i>
+              </button>
+            </div>
+            <div class="modal-footer">
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="content">
+        <div class="row">
+          <div class="col-12" style="height:fit-content;">
+            <div class="card card-chart cardExtends">
+              <div class="card-header ">
+                <div class="row">
+                  <div class="col-sm-6 text-left">
+                    <h5 class="card-category">Introduction</h5>
+                    <h2 class="card-title graphTitle">Bitcoin Historical Data</h2>
+                  </div>
+                  <div class="col-sm-6">
+                    <div class="btn-group btn-group-toggle float-right" data-toggle="buttons">
+                      <button class="btn btn-sm btn-primary btn-simple" onclick="reloadGraph(1)">
+                        Refresh Data
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="card-body vizCard">
+                  <div id="vizParent1"class="chart-area" title="vizParents">
+                    <div class="vizContainers" id="vizContainer1"></div>
+                  </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-12" style="height:fit-content;">
+            <div class="card card-chart cardExtends">
+              <div class="card-header ">
+                <div class="row">
+                  <div class="col-sm-6 text-left">
+                    <h5 class="card-category">Trend Analysis</h5>
+                    <h2 class="card-title graphTitle">90 Day Moving Average</h2>
+                  </div>
+                  <div class="col-sm-6">
+                    <div class="btn-group btn-group-toggle float-right" data-toggle="buttons">
+                      <button class="btn btn-sm btn-primary btn-simple" onclick="reloadGraph(2)">
+                        Refresh Data
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="card-body vizCard">
+                  <div id="vizParent2"class="chart-area" title="vizParents">
+                    <div class="vizContainers" id="vizContainer2"></div>
+                  </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+            <div class="col-12" style="height:fit-content;">
+              <div class="card card-chart cardExtends">
+                <div class="card-header ">
+                  <div class="row">
+                    <div class="col-sm-6 text-left">
+                      <h5 class="card-category">Historical Representation</h5>
+                      <h2 class="card-title graphTitle">Candle stick View</h2>
+                    </div>
+                    <div class="col-sm-6">
+                      <div class="btn-group btn-group-toggle float-right" data-toggle="buttons">
+                        <button class="btn btn-sm btn-primary btn-simple" onclick="reloadGraph(2)">
+                          Refresh Data
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="card-body vizCard">
+                    <div id="vizParent3"class="chart-area" title="vizParents">
+                      <div class="vizContainers" id="vizContainer3"></div>
+                    </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+              <div class="col-12" style="height:fit-content;">
+                <div class="card card-chart cardExtends">
+                  <div class="card-header ">
+                    <div class="row">
+                      <div class="col-sm-6 text-left">
+                        <h5 class="card-category">Model Testing</h5>
+                        <h2 class="card-title graphTitle">Polylinear Regression</h2>
+                      </div>
+                      <div class="col-sm-6">
+                        <div class="btn-group btn-group-toggle float-right" data-toggle="buttons">
+                          <button class="btn btn-sm btn-primary btn-simple" onclick="reloadGraph(2)">
+                            Refresh Data
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="card-body vizCard">
+                      <div id="vizParent4"class="chart-area" title="vizParents">
+                        <div class="vizContainers" id="vizContainer4"></div>
+                      </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+        <div class="row">
+          <div class="col-lg-6 col-md-12" style="max-width:40%;">
+            <div class="card card-tasks">
+              <div class="card-header " style="display:flex;">
+                <h4 style="min-width:fit-content;margin-bottom:0px;margin-top:5px;">Date Web-Scraper</h4>
+                    <input type="date" name="req_dateName" id="inputboxes" class="form-control" placeholder="mm/dd/yyyy">
+                    <button onclick="ajaxScrape()" class="btn btn-sm btn-primary btn-simple"><i class="fas fa-search" id="searchOrSpin" style="font-size:150%; border"></i>
+                    </button>
+              </div>
+              <div class="card-body ">
+                <div class="table-full-width table-responsive" style="overflow-y:hidden;overflow-x:hidden;">
+                  <table class="table">
+                    <tbody id="scrapeListTable" style="overflow-x:hidden;">
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-6 col-md-12" style="min-width:60%;">
+            <div class="card ">
+              <div class="card-header" style="display: flex;">
+                <h4 style="margin-bottom:0px;width:250px;margin-top:5px;">7-day history</h4>
+                <input id="feedInput" list="curriencies" class="form-control">
+                <datalist id="curriencies">
+                    <option value="BTC">
+                    <option value="ETH">
+                    <option value="XRP">
+                    <option value="VET">
+                    <option value="LTC">
+                    <option value="NANO">
+                  </datalist>
+                <button style="padding-left:10px;" class="btn btn-sm btn-primary btn-simple" onclick="dataFeeder()">
+                    <i class="fas fa-database" id="database_spin" ></i>
+                </button>
+              </div>
+              <div class="card-body" style="max-height:420px;min-height:420px;">
+                <div class="table-responsive" style="overflow-x:hidden;overflow-y:hidden;">
+                  <table class="table tablesorter" id="tabularDataFeed">
+                    <thead class="text-primary" id="peekDataHead">
+                        <!-- <th class="text-center"> Date </th>
+                        <th class="text-center"> Open </th>
+                        <th class="text-center"> High </th>
+                        <th class="text-center"> Low </th>
+                        <th class="text-center"> Close </th>
+                        <th class="text-center"> Volume </th>
+                        <th class="text-center"> Market Cap </th> -->
+                    </thead>
+                    <tbody id="peekTable">
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <footer class="footer">
+        <div class="container-fluid">
+          <nav>
+            <ul>
+              <li>
+                <a href="https://www.github.com/justahuman1" target="_blank" style="font-size:larger;">
+                  Sai Vallabhaneni
+                </a>
+              </li>
+              <li>
+                <a href="https://www.linkedin.com/in/saipavan-vallabhaneni/" target="_blank" style="font-size:larger;">
+                  LinkedIn
+                </a>
+              </li>
+            </ul>
+          </nav>
+      </footer>
+      </div>
+    </div>
+</body>
+</html>
