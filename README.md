@@ -31,7 +31,7 @@ A dashboard for integrating Python, Tableau, and Google Sheets for automated dat
 
 <hr/>
 
-### Tools used:
+### Stack:
 * Flask
 * Scikit-Learn
 * Google Sheets API
