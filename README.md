@@ -1,6 +1,6 @@
 # Flask Dashboard
 
-A dashboard for integrating Python, Tableau, and Google Sheets for automated data collection and visualization. Built in with a full webscraper for the top 100 crypto coins and scikit-learn models for continous integration of new bitcoin data.
+A dashboard for integrating Python, Tableau, and Google Sheets for automated data collection, visualization, and analysis. Built in with a full webscraper for the top 100 crypto coins and scikit-learn models for continous integration of new bitcoin data.
 
 [Live Site](https://scm315-honors-app-prod.herokuapp.com)
 
