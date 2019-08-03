@@ -90,7 +90,7 @@ class statistics():
         return
 
     def getNewSheetData(self):
-        sheet_id = '1C4vuMFaJ-xL0QJGjgqkiGylRUACrxGtD9AerDwItIQo'
+        sheet_id = 'sheetIdHere'
         a = SheetsCall(sheet_id,'A:G').getValues()
         sheets_df = pd.DataFrame(a)
         return sheets_df
@@ -125,7 +125,7 @@ class statistics():
         return a
     
     def neural_nets(self):
-        """lstm backpropagation"""
+        """lstm backpropagation. Removed :)"""
         return None
 
 # if __name__ == "__main__":
