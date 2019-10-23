@@ -71,7 +71,7 @@ class serverCalls():
 
     def call(self):
         cred = './gauth_SCM315.json'
-        sheet = 'https://docs.google.com/spreadsheets/d/1C4vuMFaJ-xL0QJGjgqkiGylRUACrxGtD9AerDwItIQo/'
+        sheet = '{{% sheet_link %}}'
         gc = pygsheets.authorize(service_file=cred)
         sh = gc.open_by_url(sheet)
         return sh
